@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Asteroids AI Evolution</title>
+    <script src="https://wagenaartje.github.io/neataptic/cdn/1.4.7/neataptic.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <canvas id="gameCanvas"></canvas>
+    
+    <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ MENU</button>
+
+    <div id="sidebar">
+        <h1 style="text-transform: uppercase; letter-spacing: 4px; font-weight: normal; margin-top: 0; font-size: 24px;">Asteroids AI Training</h1>
+        
+        <div class="stats">
+            GEN: <span id="genDisplay">1</span> &nbsp; RUN: <span id="runDisplay">1</span><br><br>
+            DEATHS: <span id="deathDisplay" style="display:inline-block; width: 60px; text-align: left;">0</span><br><br>
+            SCORE: <span id="scoreDisplay" style="display:inline-block; width: 60px; text-align: left;">0</span><br><br>
+            TIME: <span id="timeDisplay" style="display:inline-block; width: 70px; text-align: left;">0.0s</span><br><br>
+            FITNESS: <span id="fitnessDisplay" style="display:inline-block; width: 80px; text-align: left; color:#ff0;">-</span><br><br>
+            BEST FIT: <span id="bestFitnessDisplay" style="display:inline-block; width: 80px; text-align: left; color:#0f0;">-</span>
+        </div>
+        
+        <div class="thermometer-container">
+            <div class="cause-label">LAST DEATH: <span id="lastKiller" style="color:#fff;">-</span></div>
+            <div class="thermometer-bar">
+                <div id="barAsteroid" class="death-bar death-bar-asteroid" title="Asteroids"></div>
+                <div id="barSaucer" class="death-bar death-bar-saucer" title="Saucers"></div>
+                <div id="barBullet" class="death-bar death-bar-bullet" title="Bullets"></div>
+                <div id="barHyper" class="death-bar" style="background: #a020f0; width: 0%; transition: width 0.3s;" title="Hyperspace"></div>
+            </div>
+            <div style="width: 100%; text-align: center; font-weight: bold; margin-top: 5px; font-size: 13px;">
+                <span style="color:#0088ff">Asteroid</span> &nbsp; <span style="color:#ff0000">Saucer</span> &nbsp; <span style="color:#ffd700">Bullet</span> &nbsp; <span style="color:#a020f0">Hyperspace</span>
+            </div>
+        </div>
+        
+        <p class="hint" id="statusHint">Neataptic.js Active: The neural network is now driving.</p>
+
+        <div class="audio-controls">
+            <button id="muteBtn" onclick="toggleMute()">🔈 Unmute</button>
+            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.2" oninput="updateVolume(this.value)">
+            <button id="resetAIBtn" onclick="resetAI()" style="border-color:#f55; color:#f55;">🧠 Reset AI Brain</button>
+        </div>
+
+        <div class="leaderboards-wrapper">
+            <div class="leaderboard">
+                <h3>Highest Scores</h3>
+                <ol id="leaderboardList"><li>No scores yet</li></ol>
+            </div>
+            <div class="leaderboard">
+                <h3>Best Fitness</h3>
+                <ol id="fitnessLeaderboardList"><li>No fitness yet</li></ol>
+            </div>
+            <div class="leaderboard">
+                <h3>Longest Survival</h3>
+                <ol id="timeLeaderboardList"><li>No times yet</li></ol>
+            </div>
+            <button onclick="clearLeaderboards()" style="margin-top:10px; width:100%; background:#111; color:#f55; border:1px solid #f55; padding:8px; cursor:pointer; font-family:monospace; text-transform:uppercase; font-size:13px;" onmouseover="this.style.background='#f55';this.style.color='#000'" onmouseout="this.style.background='#111';this.style.color='#f55'">🗑 Clear Leaderboards</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
