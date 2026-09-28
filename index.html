@@ -4,24 +4,78 @@
     <meta charset="UTF-8">
     <title>Asteroids AI Evolution</title>
     <script src="https://wagenaartje.github.io/neataptic/cdn/1.4.7/neataptic.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
-    <canvas id="gameCanvas"></canvas>
+    <!-- Authentic Atari Cabinet Side Art Backdrop -->
+    <div class="cabinet-backdrop-left"></div>
+    <div class="cabinet-backdrop-right"></div>
+
+    <!-- Gameplay Arcade CRT Cabinet Shroud & Bezel -->
+    <div class="gameplay-container">
+        <div class="gameplay-crt-bezel">
+            <span class="plate-screw top-left"></span>
+            <span class="plate-screw top-right"></span>
+            <span class="plate-screw bottom-left"></span>
+            <span class="plate-screw bottom-right"></span>
+            <div class="crt-screen-well">
+                <div class="crt-scanlines"></div>
+                <canvas id="gameCanvas"></canvas>
+            </div>
+        </div>
+    </div>
     
     <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ MENU</button>
 
     <div id="sidebar">
         <h1 style="text-transform: uppercase; letter-spacing: 4px; font-weight: normal; margin-top: 0; font-size: 24px;">Asteroids AI Training</h1>
         
-        <div class="stats">
-            GEN: <span id="genDisplay">1</span> &nbsp; RUN: <span id="runDisplay">1</span><br><br>
-            DEATHS: <span id="deathDisplay" style="display:inline-block; width: 60px; text-align: left;">0</span><br><br>
-            SCORE: <span id="scoreDisplay" style="display:inline-block; width: 60px; text-align: left;">0</span><br><br>
-            TIME: <span id="timeDisplay" style="display:inline-block; width: 70px; text-align: left;">0.0s</span><br><br>
-            FITNESS: <span id="fitnessDisplay" style="display:inline-block; width: 80px; text-align: left; color:#ff0;">-</span><br><br>
-            BEST FIT: <span id="bestFitnessDisplay" style="display:inline-block; width: 80px; text-align: left; color:#0f0;">-</span>
+        <!-- Hardware Diagnostic LED Panel -->
+        <div class="diag-panel">
+            <div class="diag-panel-header">
+                <span class="diag-led-power"></span>
+                <span>SYSTEM DIAGNOSTIC AUDITS</span>
+            </div>
+
+            <div class="diag-grid">
+                <div class="diag-readout">
+                    <div class="diag-label">GEN</div>
+                    <div class="diag-display led-amber"><span id="genDisplay">1</span></div>
+                </div>
+
+                <div class="diag-readout">
+                    <div class="diag-label">RUN</div>
+                    <div class="diag-display led-amber"><span id="runDisplay">1</span></div>
+                </div>
+
+                <div class="diag-readout">
+                    <div class="diag-label">SCORE</div>
+                    <div class="diag-display led-green"><span id="scoreDisplay">0</span></div>
+                </div>
+
+                <div class="diag-readout">
+                    <div class="diag-label">DEATHS</div>
+                    <div class="diag-display led-red"><span id="deathDisplay">0</span></div>
+                </div>
+
+                <div class="diag-readout">
+                    <div class="diag-label">TIME</div>
+                    <div class="diag-display led-cyan"><span id="timeDisplay">0.0s</span></div>
+                </div>
+
+                <div class="diag-readout">
+                    <div class="diag-label">FITNESS</div>
+                    <div class="diag-display led-yellow"><span id="fitnessDisplay">-</span></div>
+                </div>
+
+                <div class="diag-readout diag-readout-wide">
+                    <div class="diag-label">PEAK FITNESS</div>
+                    <div class="diag-display led-green"><span id="bestFitnessDisplay">-</span></div>
+                </div>
+            </div>
         </div>
         
         <div class="thermometer-container">
@@ -42,23 +96,100 @@
         <div class="audio-controls">
             <button id="muteBtn" onclick="toggleMute()">🔈 Unmute</button>
             <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.2" oninput="updateVolume(this.value)">
-            <button id="resetAIBtn" onclick="resetAI()" style="border-color:#f55; color:#f55;">🧠 Reset AI Brain</button>
         </div>
 
+        <div class="brain-controls">
+            <button id="exportBrainBtn" onclick="exportBrain()">💾 Save Brain</button>
+            <button id="importBrainBtn" onclick="openLoadModal()">📂 Load Brain</button>
+            <input type="file" id="importBrainInput" accept=".json" style="display:none" onchange="importBrain(event)">
+        </div>
+        <button onclick="showIntroScreen()" style="margin-top:8px; width:100%; background:#111; color:#888; border:1px solid #333; padding:6px; cursor:pointer; font-family:monospace; font-size:11px; text-transform:uppercase;">🎬 Watch Intro Video</button>
+
         <div class="leaderboards-wrapper">
-            <div class="leaderboard">
-                <h3>Highest Scores</h3>
-                <ol id="leaderboardList"><li>No scores yet</li></ol>
+            <div class="leaderboard-tabs">
+                <button class="leaderboard-tab-btn active" data-tab="scores" onclick="switchLeaderboardTab('scores')">Scores</button>
+                <button class="leaderboard-tab-btn" data-tab="fitness" onclick="switchLeaderboardTab('fitness')">Fitness</button>
+                <button class="leaderboard-tab-btn" data-tab="survival" onclick="switchLeaderboardTab('survival')">Survival</button>
             </div>
-            <div class="leaderboard">
-                <h3>Best Fitness</h3>
-                <ol id="fitnessLeaderboardList"><li>No fitness yet</li></ol>
+
+            <div id="tab-scores" class="leaderboard-tab-content active">
+                <div class="leaderboard">
+                    <h3>Highest Scores</h3>
+                    <ol id="leaderboardList"><li>No scores yet</li></ol>
+                </div>
             </div>
-            <div class="leaderboard">
-                <h3>Longest Survival</h3>
-                <ol id="timeLeaderboardList"><li>No times yet</li></ol>
+
+            <div id="tab-fitness" class="leaderboard-tab-content">
+                <div class="leaderboard">
+                    <h3>Best Fitness</h3>
+                    <ol id="fitnessLeaderboardList"><li>No fitness yet</li></ol>
+                </div>
             </div>
-            <button onclick="clearLeaderboards()" style="margin-top:10px; width:100%; background:#111; color:#f55; border:1px solid #f55; padding:8px; cursor:pointer; font-family:monospace; text-transform:uppercase; font-size:13px;" onmouseover="this.style.background='#f55';this.style.color='#000'" onmouseout="this.style.background='#111';this.style.color='#f55'">🗑 Clear Leaderboards</button>
+
+            <div id="tab-survival" class="leaderboard-tab-content">
+                <div class="leaderboard">
+                    <h3>Longest Survival</h3>
+                    <ol id="timeLeaderboardList"><li>No times yet</li></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro Splash & Video Screen -->
+    <div id="introScreen" class="intro-overlay">
+        <div class="intro-backdrop-left"></div>
+        <div class="intro-backdrop-right"></div>
+        <div class="intro-backdrop-gradient"></div>
+
+        <div class="intro-container">
+            <!-- Arcade Header Plate -->
+            <div class="arcade-plate marquee-plate">
+                <span class="plate-screw top-left"></span>
+                <span class="plate-screw top-right"></span>
+                <span class="plate-screw bottom-left"></span>
+                <span class="plate-screw bottom-right"></span>
+                <div class="arcade-marquee-header">★ 1979 ATARI COIN-OP ★</div>
+                <h1 class="intro-title">ASTEROIDS AI</h1>
+                <p class="intro-subtitle">INSERT COIN // NEUROEVOLUTION SIMULATOR</p>
+            </div>
+            
+            <div class="intro-video-wrapper">
+                <div class="crt-scanlines"></div>
+                <video id="introVideo" controls autoplay loop muted playsinline>
+                    <source src="assets/intro.mp4" type="video/mp4">
+                    <source src="assets/gemini_generated_video_b2dce04e.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <!-- Arcade Control Panel Plate -->
+            <div class="arcade-plate control-plate">
+                <span class="plate-screw top-left"></span>
+                <span class="plate-screw top-right"></span>
+                <span class="plate-screw bottom-left"></span>
+                <span class="plate-screw bottom-right"></span>
+
+                <div class="arcade-button-unit">
+                    <button class="round-arcade-btn btn-green" onclick="closeIntroScreen()" title="1 Player Start">
+                        <span class="btn-cap"></span>
+                    </button>
+                    <div class="arcade-label">1 PLAYER START</div>
+                </div>
+
+                <div class="arcade-button-unit">
+                    <button class="round-arcade-btn btn-amber" onclick="openLoadModal()" title="Load Checkpoint">
+                        <span class="btn-cap"></span>
+                    </button>
+                    <div class="arcade-label">LOAD CHECKPOINT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeLoadModal()">
+        <div class="modal-box">
+            <h3>Select Brain Checkpoint</h3>
+            <div id="brainList" class="brain-list"></div>
+            <button class="modal-close-btn" onclick="closeLoadModal()">Cancel</button>
         </div>
     </div>
 

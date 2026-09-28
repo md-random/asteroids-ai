@@ -19,6 +19,7 @@ export const state = {
     lastFitness: 0,
     bestFitnessThisGen: 0,
     neat: null,
+    isIntroActive: true,
     
     score: 0,
     framesAlive: 0,

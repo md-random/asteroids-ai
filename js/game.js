@@ -44,7 +44,8 @@ export function resetGame() {
         x: state.canvas.width / 2, y: state.canvas.height / 2, a: -Math.PI / 2, 
         dx: 0, dy: 0, rot: 0, thrusting: false,
         gridMap: new Array(100).fill(0),
-        cooldown: 0, hyperPressed: false, isRespawning: false, respawnTimer: 0
+        cooldown: 0, hyperPressed: false, isRespawning: false, respawnTimer: 0,
+        prevMinDist: 200
     };
 
     document.getElementById('genDisplay').innerText = state.generation;
@@ -131,6 +132,7 @@ export function handleDeath(killer) {
     state.ship.dy = 0;
     state.ship.a = -Math.PI / 2;
     state.ship.hyperPressed = false;
+    state.ship.prevMinDist = 200;
     state.bullets = [];
     return false;
 }

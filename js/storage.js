@@ -112,3 +112,188 @@ export function updateThermometer(killer) {
     }
     document.getElementById('deathDisplay').innerText = state.totalDeaths;
 }
+
+function applyBrainData(data) {
+    let popList = data.population || (Array.isArray(data) ? data : null);
+    if (!Array.isArray(popList) || popList.length === 0) {
+        throw new Error('No population data found.');
+    }
+    if (popList[0].input !== 106) {
+        throw new Error(`Incompatible network: expected 106 inputs, found ${popList[0].input}.`);
+    }
+
+    state.neat.population = popList.map(j => neataptic.Network.fromJSON(j));
+    state.generation = data.generation || state.generation || 1;
+    state.genomeIndex = 0;
+    state.bestFitnessThisGen = 0;
+
+    if (data.topScores) {
+        state.topScores = data.topScores;
+        localStorage.setItem('asteroids_top10_grid_v2', JSON.stringify(state.topScores));
+    }
+    if (data.topTimes) {
+        state.topTimes = data.topTimes;
+        localStorage.setItem('asteroids_toptime_grid_v2', JSON.stringify(state.topTimes));
+    }
+    if (data.topFitness) {
+        state.topFitness = data.topFitness;
+        localStorage.setItem('asteroids_topfitness_grid_v2', JSON.stringify(state.topFitness));
+    }
+    if (data.deaths) {
+        state.totalDeaths = data.deaths.total || 0;
+        state.deathsByAsteroid = data.deaths.asteroid || 0;
+        state.deathsBySaucer = data.deaths.saucer || 0;
+        state.deathsByBullet = data.deaths.bullet || 0;
+        state.deathsByHyper = data.deaths.hyper || 0;
+        localStorage.setItem('asteroids_deaths_total_v2', state.totalDeaths);
+        localStorage.setItem('asteroids_deaths_asteroid_v2', state.deathsByAsteroid);
+        localStorage.setItem('asteroids_deaths_saucer_v2', state.deathsBySaucer);
+        localStorage.setItem('asteroids_deaths_bullet_v2', state.deathsByBullet);
+        localStorage.setItem('asteroids_deaths_hyper_v2', state.deathsByHyper);
+    }
+
+    localStorage.setItem('asteroids_ai_pop_grid_v2', JSON.stringify(popList));
+
+    updateLeaderboardUI();
+    updateThermometer('');
+    document.getElementById('genDisplay').innerText = state.generation;
+    document.getElementById('runDisplay').innerText = 1;
+    resetGame();
+}
+
+export async function exportBrain() {
+    if (!state.neat || !state.neat.population || state.neat.population.length === 0) {
+        alert('No active AI population to save!');
+        return;
+    }
+
+    const brainData = {
+        version: 'v2',
+        inputSize: 106,
+        outputSize: 5,
+        generation: state.generation,
+        genomeIndex: state.genomeIndex,
+        exportedAt: new Date().toISOString(),
+        topScores: state.topScores,
+        topTimes: state.topTimes,
+        topFitness: state.topFitness,
+        deaths: {
+            total: state.totalDeaths,
+            asteroid: state.deathsByAsteroid,
+            saucer: state.deathsBySaucer,
+            bullet: state.deathsByBullet,
+            hyper: state.deathsByHyper
+        },
+        population: state.neat.population.map(n => n.toJSON())
+    };
+
+    // 1. Try 1-click auto-save to local server (data/default_brain.json)
+    try {
+        const res = await fetch('/api/save-brain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(brainData)
+        });
+        if (res.ok) {
+            alert(`Auto-saved to data/default_brain.json (Gen ${state.generation})!`);
+            return;
+        }
+    } catch (e) {}
+
+    // 2. Fallback to direct download if server is not handling POST
+    const blob = new Blob([JSON.stringify(brainData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `default_brain.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+export async function openLoadModal() {
+    const modal = document.getElementById('loadModal');
+    const list = document.getElementById('brainList');
+    if (!modal || !list) return;
+
+    list.innerHTML = '<div style="color:#888; padding: 15px;">Scanning saved checkpoints...</div>';
+    modal.style.display = 'flex';
+
+    try {
+        const res = await fetch('/api/list-brains');
+        if (!res.ok) throw new Error('Could not list brains');
+        const brains = await res.json();
+
+        if (brains.length === 0) {
+            list.innerHTML = '<div style="color:#888; padding: 10px;">No saved brains in data/</div>';
+        } else {
+            let html = '';
+            brains.forEach(b => {
+                let isDefault = b.filename === 'default_brain.json';
+                let label = isDefault ? '⭐ Default Brain' : b.filename;
+                let genLabel = b.generation ? `Gen ${b.generation}` : '';
+                html += `
+                    <button class="brain-item-btn" onclick="loadBrainFile('${b.filename}')">
+                        <span>${label}</span>
+                        <span class="gen-tag">${genLabel}</span>
+                    </button>
+                `;
+            });
+            list.innerHTML = html;
+        }
+    } catch (e) {
+        list.innerHTML = '<div style="color:#f55; padding: 10px;">Could not connect to server.</div>';
+    }
+
+    const uploadBtn = document.createElement('button');
+    uploadBtn.className = 'brain-item-btn';
+    uploadBtn.style.marginTop = '8px';
+    uploadBtn.style.borderColor = '#555';
+    uploadBtn.innerHTML = '<span>📁 Upload Custom JSON File...</span>';
+    uploadBtn.onclick = () => {
+        closeLoadModal();
+        document.getElementById('importBrainInput').click();
+    };
+    list.appendChild(uploadBtn);
+}
+
+export function closeLoadModal() {
+    const modal = document.getElementById('loadModal');
+    if (modal) modal.style.display = 'none';
+}
+
+export async function loadBrainFile(filename) {
+    try {
+        const res = await fetch(`data/${filename}`);
+        if (!res.ok) throw new Error(`Could not load data/${filename}`);
+        const data = await res.json();
+        applyBrainData(data);
+        closeLoadModal();
+        if (window.closeIntroScreen) window.closeIntroScreen();
+        alert(`Loaded ${filename} (Generation ${state.generation})!`);
+    } catch (err) {
+        alert('Failed to load brain: ' + err.message);
+    }
+}
+
+export function importBrain(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            applyBrainData(data);
+            alert(`Brain loaded successfully! Resumed at Generation ${state.generation}.`);
+        } catch (err) {
+            alert('Failed to parse brain JSON: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+
+

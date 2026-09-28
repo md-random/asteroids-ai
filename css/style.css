@@ -1,11 +1,72 @@
 body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: white; font-family: monospace; }
-canvas { 
-    display: block; 
-    background-color: #000; 
-    image-rendering: pixelated;
-    border: 1px solid #333;
-    margin: 50px auto;
+
+/* Authentic Atari Cabinet Side Art Backdrop - Full Screen Global */
+.cabinet-backdrop-left, .intro-backdrop-left {
+    position: fixed; top: 0; left: 0; width: 50vw; height: 100vh;
+    background-image: url('../assets/media_1789938557926.png');
+    background-size: cover; background-position: left center; background-repeat: no-repeat;
+    opacity: 1; pointer-events: none; z-index: 0;
 }
+
+.cabinet-backdrop-right, .intro-backdrop-right {
+    position: fixed; top: 0; right: 0; width: 50vw; height: 100vh;
+    background-image: url('../assets/media_1789938527086.png');
+    background-size: cover; background-position: right center; background-repeat: no-repeat;
+    opacity: 1; pointer-events: none; z-index: 0;
+}
+
+/* Gameplay Cabinet Container */
+.gameplay-container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Molded Arcade CRT Bezel Frame around Gameplay Square */
+.gameplay-crt-bezel {
+    position: relative;
+    pointer-events: auto;
+    padding: 16px;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #2b333c 0%, #161b20 40%, #0d1013 100%);
+    border: 4px solid #3d4753;
+    outline: 2px solid #090c0e;
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.95),
+        0 0 35px rgba(0, 255, 204, 0.22),
+        inset 0 3px 6px rgba(255, 255, 255, 0.22),
+        inset 0 -6px 12px rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: content-box;
+}
+
+/* CRT Screen Inset Housing */
+.crt-screen-well {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 
+        inset 0 0 28px rgba(0, 0, 0, 0.95),
+        0 0 0 3px #0f1317;
+    display: flex;
+}
+
+/* Gameplay Canvas */
+canvas#gameCanvas {
+    display: block;
+    background-color: #000;
+    image-rendering: pixelated;
+    border: none;
+    margin: 0;
+}
+
 #sidebar {
     position: absolute;
     top: 0;
@@ -17,7 +78,7 @@ canvas {
     transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
-    z-index: 10;
+    z-index: 30;
     padding: 20px;
     box-sizing: border-box;
     display: flex;
@@ -46,7 +107,116 @@ canvas {
     background: #0f0;
     color: #000;
 }
-.stats { margin-top: 15px; font-size: 18px; color: #0f0; letter-spacing: 2px; }
+/* Hardware Diagnostic LED Panel */
+.diag-panel {
+    width: 100%;
+    background: #07090c;
+    border: 2px solid #222b34;
+    border-radius: 6px;
+    padding: 12px;
+    box-sizing: border-box;
+    margin: 15px 0 10px;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
+.diag-panel-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8.5px;
+    letter-spacing: 2px;
+    color: #778899;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #182028;
+    text-transform: uppercase;
+}
+
+.diag-led-power {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00ff66;
+    box-shadow: 0 0 6px #00ff66;
+    display: inline-block;
+}
+
+.diag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.diag-readout {
+    display: flex;
+    flex-direction: column;
+}
+
+.diag-readout-wide {
+    grid-column: 1 / -1;
+}
+
+.diag-label {
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;
+    color: #667788;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+/* Recessed 7-Segment / VFD Diagnostic Window */
+.diag-display {
+    background: #030406;
+    border: 1.5px solid #1a222b;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    line-height: 1.1;
+    text-align: right;
+    box-sizing: border-box;
+    box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.95),
+        inset 0 0 8px rgba(0, 0, 0, 0.8),
+        0 1px 0 rgba(255, 255, 255, 0.05);
+    letter-spacing: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Hardware Diagnostic LED Glow Colors */
+.led-amber {
+    color: #ffaa00;
+    text-shadow: 0 0 8px rgba(255, 170, 0, 0.65), 0 0 16px rgba(255, 170, 0, 0.3);
+}
+
+.led-green {
+    color: #00ffcc;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.65), 0 0 16px rgba(0, 255, 204, 0.3);
+}
+
+.led-red {
+    color: #ff3344;
+    text-shadow: 0 0 8px rgba(255, 51, 68, 0.65), 0 0 16px rgba(255, 51, 68, 0.3);
+}
+
+.led-yellow {
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.65), 0 0 16px rgba(255, 215, 0, 0.3);
+}
+
+.led-cyan {
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.65), 0 0 16px rgba(56, 189, 248, 0.3);
+}
+
 .hint { color: #555; font-size: 14px; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
 
 .thermometer-container {
@@ -75,10 +245,369 @@ canvas {
 .audio-controls button:hover { background: #0f0; color: #000; }
 .audio-controls input[type=range] { width: 100%; accent-color: #0f0; }
 
-.leaderboards-wrapper { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; width: 100%; }
-.leaderboard { width: 100%; background: #0a0a0a; border: 1px solid #333; padding: 20px; text-align: left; box-sizing: border-box; }
-.leaderboard h3 { margin: 0 0 15px 0; color: #0f0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; text-transform: uppercase; text-align: center; }
-.leaderboard ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 10px; color: #fff; font-size: 15px; list-style-type: none; }
-.leaderboard li { cursor: pointer; padding: 4px; border-bottom: 1px dotted #333; display: flex; justify-content: space-between; }
-.leaderboard li:hover { color: #0f0; border-bottom: 1px dotted #0f0; }
-.leaderboard li span:last-child { color: #0f0; font-weight: bold; }
+.brain-controls {
+    display: flex; gap: 8px; margin-top: 10px; width: 100%; box-sizing: border-box;
+}
+.brain-controls button {
+    flex: 1; background: #111; color: #00ffcc; border: 1px solid #00ffcc; padding: 8px 4px; cursor: pointer; text-transform: uppercase; font-family: monospace; font-size: 12px;
+}
+.brain-controls button:hover { background: #00ffcc; color: #000; }
+
+.leaderboards-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.leaderboard-tabs {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.leaderboard-tab-btn {
+    flex: 1;
+    background: #11151a;
+    color: #667788;
+    border: 1px solid #2d3742;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 8px 4px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.15s ease;
+}
+
+.leaderboard-tab-btn:hover {
+    background: #192027;
+    color: #aaccdd;
+    border-color: #445566;
+}
+
+.leaderboard-tab-btn.active {
+    background: #080c10;
+    color: #00ffcc;
+    border-color: #00ffcc;
+    border-bottom: 1px solid #080c10;
+    box-shadow: inset 0 2px 0 #00ffcc;
+}
+
+.leaderboard-tab-content {
+    display: none;
+    width: 100%;
+}
+
+.leaderboard-tab-content.active {
+    display: block;
+}
+
+.leaderboard {
+    width: 100%;
+    background: #080c10;
+    border: 1px solid #00ffcc;
+    border-radius: 0 0 6px 6px;
+    padding: 16px;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.leaderboard h3 {
+    margin: 0 0 12px 0;
+    color: #00ffcc;
+    font-size: 13px;
+    border-bottom: 1px solid #1a2730;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.leaderboard ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 6px; color: #fff; font-size: 13px; list-style-type: none; }
+.leaderboard li { cursor: pointer; padding: 5px 6px; border-bottom: 1px dotted #22333f; display: flex; justify-content: space-between; }
+.leaderboard li:hover { color: #00ffcc; border-bottom: 1px dotted #00ffcc; background: rgba(0, 255, 204, 0.05); }
+.leaderboard li span:last-child { color: #00ffcc; font-weight: bold; }
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+}
+.modal-box {
+    background: #0a0a0a; border: 2px solid #00ffcc; padding: 20px; width: 360px; max-width: 90%;
+    color: #fff; font-family: monospace; text-align: center; box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+}
+.modal-box h3 { margin: 0 0 15px 0; color: #00ffcc; text-transform: uppercase; letter-spacing: 2px; font-size: 15px; }
+.brain-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; margin-bottom: 15px; }
+.brain-item-btn {
+    background: #111; color: #fff; border: 1px solid #333; padding: 10px 12px; cursor: pointer;
+    font-family: monospace; font-size: 13px; text-align: left; display: flex; justify-content: space-between; align-items: center;
+}
+.brain-item-btn:hover { background: #00ffcc; color: #000; border-color: #00ffcc; }
+.brain-item-btn span.gen-tag { color: #00ffcc; font-weight: bold; }
+.brain-item-btn:hover span.gen-tag { color: #000; }
+.modal-close-btn {
+    width: 100%; background: #1a1a1a; color: #aaa; border: 1px solid #444; padding: 8px; cursor: pointer;
+    font-family: monospace; text-transform: uppercase; font-size: 12px;
+}
+.modal-close-btn:hover { background: #333; color: #fff; }
+
+/* Intro Screen - Authentic 1979 Atari Arcade Cabinet Styling */
+.intro-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.intro-backdrop-left, .intro-backdrop-right, .intro-backdrop-gradient {
+    display: none;
+}
+
+/* Arcade Display & Cabinet Bezel */
+.intro-container {
+    position: relative; z-index: 2;
+    max-width: 803px; width: 94%; text-align: center;
+    padding: 16px; box-sizing: border-box;
+    font-family: 'Press Start 2P', monospace;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+/* Authentic Arcade Decal / Metal Text Plate */
+.arcade-plate {
+    position: relative;
+    background: linear-gradient(180deg, rgba(22, 26, 32, 0.96) 0%, rgba(10, 12, 16, 0.98) 100%);
+    border: 2px solid #3d4853;
+    outline: 1px solid rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 0 18px rgba(0, 0, 0, 0.9),
+        0 8px 30px rgba(0, 0, 0, 0.9),
+        0 0 1px 1px rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+}
+
+/* Corner Screws / Rivets */
+.plate-screw {
+    position: absolute;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #e0e0e0, #888 50%, #444 80%, #222 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 0.5px 0.5px #fff;
+    pointer-events: none;
+}
+.plate-screw::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 18%;
+    width: 64%; height: 1.5px;
+    background: #1b1b1b;
+    transform: translateY(-50%) rotate(45deg);
+    box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.35);
+}
+.plate-screw.top-left { top: 7px; left: 7px; }
+.plate-screw.top-right { top: 7px; right: 7px; }
+.plate-screw.bottom-left { bottom: 7px; left: 7px; }
+.plate-screw.bottom-right { bottom: 7px; right: 7px; }
+
+/* Marquee Header Plate */
+.marquee-plate {
+    width: 100%;
+    padding: 16px 24px 14px;
+    margin-bottom: 18px;
+}
+
+.arcade-marquee-header {
+    font-size: 11px; letter-spacing: 3px; color: #ffd700;
+    margin-bottom: 8px; text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+}
+
+.intro-title {
+    font-size: 26px; letter-spacing: 4px; color: #00ffcc; margin: 0 0 8px 0;
+    text-shadow: 0 0 12px #00ffcc, 0 0 25px rgba(0, 255, 204, 0.6);
+    line-height: 1.25;
+}
+
+.intro-subtitle {
+    font-size: 10px; letter-spacing: 2px; color: #ffb300; margin: 0;
+    text-shadow: 0 0 6px rgba(255, 179, 0, 0.6);
+    animation: blinkCoin 1.4s infinite;
+}
+
+@keyframes blinkCoin {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Molded Arcade CRT Bezel Frame */
+.intro-video-wrapper {
+    position: relative; width: 100%;
+    border: 4px solid #2a3138;
+    outline: 2px solid #14181b;
+    border-radius: 12px;
+    background: #000;
+    box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 0.9),
+        0 0 35px rgba(0, 255, 204, 0.3),
+        0 10px 25px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    margin-bottom: 18px; aspect-ratio: 16 / 9;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.intro-video-wrapper video {
+    width: 100%; height: 100%; object-fit: contain; display: block;
+}
+
+/* CRT Scanlines Overlay */
+.crt-scanlines {
+    pointer-events: none; position: absolute; inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
+    background-size: 100% 4px;
+    z-index: 2;
+    opacity: 0.75;
+}
+
+/* Arcade Control Panel Plate */
+.control-plate {
+    width: 100%;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 48px;
+}
+
+.arcade-button-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+}
+
+/* Authentic Round Arcade Pushbutton (Collar & Bezel) */
+.round-arcade-btn {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: radial-gradient(circle at 50% 40%, #3a424b 0%, #1c2126 65%, #0d1013 100%);
+    box-shadow: 
+        0 6px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.25),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+}
+
+/* Button Plunger Cap */
+.btn-cap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    position: relative;
+    display: block;
+    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.08s ease, filter 0.15s ease;
+}
+
+/* 1 Player Start - Green Arcade Button */
+.btn-green .btn-cap {
+    background: radial-gradient(circle at 40% 35%, #88ffdd 0%, #00e5a3 45%, #008f66 85%, #005a40 100%);
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.6),
+        inset 0 2px 3px rgba(255, 255, 255, 0.6),
+        inset 0 -3px 4px rgba(0, 40, 25, 0.8),
+        0 0 16px rgba(0, 255, 170, 0.45);
+}
+.round-arcade-btn.btn-green:hover .btn-cap {
+    filter: brightness(1.25);
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        inset 0 -3px 4px rgba(0, 40, 25, 0.8),
+        0 0 28px rgba(0, 255, 170, 0.9);
+}
+.round-arcade-btn.btn-green:active .btn-cap {
+    transform: translateY(5px) scale(0.95);
+    filter: brightness(1.35);
+    box-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.7),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6),
+        inset 0 2px 6px rgba(0, 0, 0, 0.6),
+        0 0 18px rgba(0, 255, 170, 0.7);
+}
+
+/* Load Checkpoint - Amber Arcade Button */
+.btn-amber .btn-cap {
+    background: radial-gradient(circle at 40% 35%, #ffe699 0%, #ffaa00 45%, #b36b00 85%, #734500 100%);
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.6),
+        inset 0 2px 3px rgba(255, 255, 255, 0.6),
+        inset 0 -3px 4px rgba(50, 30, 0, 0.8),
+        0 0 16px rgba(255, 170, 0, 0.45);
+}
+.round-arcade-btn.btn-amber:hover .btn-cap {
+    filter: brightness(1.25);
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.8),
+        inset 0 -3px 4px rgba(50, 30, 0, 0.8),
+        0 0 28px rgba(255, 170, 0, 0.9);
+}
+.round-arcade-btn.btn-amber:active .btn-cap {
+    transform: translateY(5px) scale(0.95);
+    filter: brightness(1.35);
+    box-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.7),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6),
+        inset 0 2px 6px rgba(0, 0, 0, 0.6),
+        0 0 18px rgba(255, 170, 0, 0.7);
+}
+
+/* Silkscreened Arcade Button Labels */
+.arcade-label {
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 2px;
+    padding: 7px 14px;
+    background: #090c0f;
+    border: 1.5px solid #2d3742;
+    border-radius: 4px;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 2px 6px rgba(0, 0, 0, 0.7);
+    text-transform: uppercase;
+    font-family: 'Press Start 2P', monospace;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+    pointer-events: none;
+}
+
+.arcade-button-unit:first-child .arcade-label {
+    color: #00ffcc;
+    border-color: #00775e;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+}
+
+.arcade-button-unit:last-child .arcade-label {
+    color: #ffb300;
+    border-color: #805900;
+    text-shadow: 0 0 8px rgba(255, 179, 0, 0.5);
+}
+
+
+

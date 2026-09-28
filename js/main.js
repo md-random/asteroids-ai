@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { toggleMute, updateVolume, playSaucerSiren, playSaucerShoot, playBang } from './audio.js';
-import { updateLeaderboardUI, resetAI, clearLeaderboards, updateThermometer } from './storage.js';
-import { initAI, act } from './ai.js';
+import { updateLeaderboardUI, resetAI, clearLeaderboards, updateThermometer, exportBrain, importBrain, openLoadModal, closeLoadModal, loadBrainFile } from './storage.js';
+import { initAI, act, loadDefaultBrainIfEmpty } from './ai.js';
 import { createAsteroid, resetGame, handleDeath } from './game.js';
 import { drawGame } from './render.js';
 
@@ -10,6 +10,21 @@ window.toggleMute = toggleMute;
 window.updateVolume = updateVolume;
 window.resetAI = resetAI;
 window.clearLeaderboards = clearLeaderboards;
+window.exportBrain = exportBrain;
+window.importBrain = importBrain;
+window.openLoadModal = openLoadModal;
+window.closeLoadModal = closeLoadModal;
+window.loadBrainFile = loadBrainFile;
+
+export function switchLeaderboardTab(tabName) {
+    document.querySelectorAll('.leaderboard-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.leaderboard-tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === 'tab-' + tabName);
+    });
+}
+window.switchLeaderboardTab = switchLeaderboardTab;
 
 state.canvas = document.getElementById('gameCanvas');
 state.ctx = state.canvas.getContext('2d');
@@ -38,10 +53,36 @@ state.ctx.lineJoin = 'round';
 
 updateLeaderboardUI();
 initAI();
+loadDefaultBrainIfEmpty();
 resetGame();
 updateThermometer(null);
 
+export function closeIntroScreen() {
+    state.isIntroActive = false;
+    const intro = document.getElementById('introScreen');
+    if (intro) intro.style.display = 'none';
+    const video = document.getElementById('introVideo');
+    if (video) video.pause();
+}
+
+export function showIntroScreen() {
+    state.isIntroActive = true;
+    const intro = document.getElementById('introScreen');
+    if (intro) intro.style.display = 'flex';
+    const video = document.getElementById('introVideo');
+    if (video) video.play().catch(() => {});
+}
+
+window.closeIntroScreen = closeIntroScreen;
+window.showIntroScreen = showIntroScreen;
+
 function update() {
+    if (state.isIntroActive) {
+        drawGame();
+        requestAnimationFrame(update);
+        return;
+    }
+
     if (!state.ship.isRespawning) {
         act();
         state.framesAlive++;
@@ -283,6 +324,7 @@ function update() {
             let dy = state.bullets[i].y - a.y;
 
             if (Math.sqrt(dx*dx + dy*dy) < r) { 
+                let wasAimed = state.bullets[i].aimed;
                 state.bullets.splice(i, 1);
                 state.asteroids.splice(j, 1);
                 bulletDestroyed = true;
@@ -297,7 +339,8 @@ function update() {
                     else if (a.size === 1) points = 100;
                 }
                 state.score += points; 
-                state.runFitness += points; 
+                let hitFitness = points + (wasAimed ? 15 : 0);
+                state.runFitness += hitFitness; 
                 document.getElementById('scoreDisplay').innerText = state.score;
                 playBang(false); 
 
