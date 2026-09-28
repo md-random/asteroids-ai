@@ -91,32 +91,62 @@
             </div>
         </div>
         
-        <div class="thermometer-container">
-            <div class="cause-label">LAST DEATH: <span id="lastKiller" style="color:#fff;">-</span></div>
+        <!-- Mortality Diagnostic Panel -->
+        <div class="diag-panel">
+            <div class="diag-panel-header">
+                <span class="diag-led-power led-red-dot"></span>
+                <span>MORTALITY ANALYSIS</span>
+            </div>
+
+            <div class="diag-fatality-row">
+                <span class="diag-label">LAST FATALITY:</span>
+                <span id="lastKiller" class="diag-killer-readout">-</span>
+            </div>
+
             <div class="thermometer-bar">
                 <div id="barAsteroid" class="death-bar death-bar-asteroid" title="Asteroids"></div>
                 <div id="barSaucer" class="death-bar death-bar-saucer" title="Saucers"></div>
                 <div id="barBullet" class="death-bar death-bar-bullet" title="Bullets"></div>
-                <div id="barHyper" class="death-bar" style="background: #a020f0; width: 0%; transition: width 0.3s;" title="Hyperspace"></div>
+                <div id="barHyper" class="death-bar death-bar-hyper" title="Hyperspace"></div>
             </div>
-            <div style="width: 100%; text-align: center; font-weight: bold; margin-top: 5px; font-size: 13px;">
-                <span style="color:#0088ff">Asteroid</span> &nbsp; <span style="color:#ff0000">Saucer</span> &nbsp; <span style="color:#ffd700">Bullet</span> &nbsp; <span style="color:#a020f0">Hyperspace</span>
-            </div>
-        </div>
-        
-        <p class="hint" id="statusHint">Neataptic.js Active: The neural network is now driving.</p>
 
-        <div class="audio-controls">
-            <button id="muteBtn" onclick="toggleMute()">🔈 Unmute</button>
-            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.2" oninput="updateVolume(this.value)">
+            <div class="thermometer-legend">
+                <span class="leg-item leg-ast">● ASTEROID</span>
+                <span class="leg-item leg-sau">● SAUCER</span>
+                <span class="leg-item leg-bul">● BULLET</span>
+                <span class="leg-item leg-hyp">● HYPER</span>
+            </div>
         </div>
 
-        <div class="brain-controls">
-            <button id="exportBrainBtn" onclick="exportBrain()">💾 Save Brain</button>
-            <button id="importBrainBtn" onclick="openLoadModal()">📂 Load Brain</button>
-            <input type="file" id="importBrainInput" accept=".json" style="display:none" onchange="importBrain(event)">
+        <!-- Cabinet Audio Panel -->
+        <div class="diag-panel">
+            <div class="diag-panel-header">
+                <span class="diag-led-power led-amber-dot"></span>
+                <span>GAMEPLAY VOLUME</span>
+            </div>
+
+            <div class="diag-audio-row">
+                <button id="muteBtn" class="arcade-service-btn" onclick="toggleMute()">🔈 Unmute</button>
+                <div class="diag-fader-unit">
+                    <span class="diag-label">VOL</span>
+                    <input type="range" id="volSlider" class="arcade-fader" min="0" max="1" step="0.05" value="0.2" oninput="updateVolume(this.value)">
+                </div>
+            </div>
         </div>
-        <button onclick="showIntroScreen()" style="margin-top:8px; width:100%; background:#111; color:#888; border:1px solid #333; padding:6px; cursor:pointer; font-family:monospace; font-size:11px; text-transform:uppercase;">🎬 Watch Intro Video</button>
+
+        <!-- Neural Checkpoint ROM Panel -->
+        <div class="diag-panel">
+            <div class="diag-panel-header">
+                <span class="diag-led-power led-cyan-dot"></span>
+                <span>CHECKPOINT ROM ENGINE</span>
+            </div>
+
+            <div class="brain-controls">
+                <button id="exportBrainBtn" class="arcade-service-btn" onclick="exportBrain()">💾 Save Brain</button>
+                <button id="importBrainBtn" class="arcade-service-btn" onclick="openLoadModal()">📂 Load Brain</button>
+                <input type="file" id="importBrainInput" accept=".json" style="display:none" onchange="importBrain(event)">
+            </div>
+        </div>
 
         <div class="leaderboards-wrapper">
             <div class="leaderboard-tabs">

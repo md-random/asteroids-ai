@@ -254,41 +254,194 @@ canvas#gameCanvas {
     text-shadow: 0 0 8px rgba(56, 189, 248, 0.65), 0 0 16px rgba(56, 189, 248, 0.3);
 }
 
-.hint { color: #555; font-size: 14px; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.led-red-dot { background: #ff3344; box-shadow: 0 0 6px #ff3344; }
+.led-amber-dot { background: #ffaa00; box-shadow: 0 0 6px #ffaa00; }
+.led-cyan-dot { background: #00ffcc; box-shadow: 0 0 6px #00ffcc; }
 
-.thermometer-container {
-    width: 100%; margin: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 10px;
-    font-size: 14px; color: #fff;
+/* Mortality Diagnostic Analysis */
+.diag-fatality-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
+
+.diag-killer-readout {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+    letter-spacing: 1px;
+}
+
 .thermometer-bar {
-    width: 100%; height: 20px; background: #222; border: 1px solid #555; display: flex; overflow: hidden;
-    border-radius: 10px;
+    width: 100%;
+    height: 22px;
+    background: #030406;
+    border: 1.5px solid #1a222b;
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.95), inset 0 0 6px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
 }
+
 .death-bar {
-    display: flex; align-items: center; justify-content: center; 
-    font-size: 12px; font-weight: bold; color: #000; overflow: hidden; white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: width 0.3s ease;
 }
-.death-bar-asteroid { background: #0088ff; width: 0%; transition: width 0.3s; }
-.death-bar-saucer { background: #ff0000; width: 0%; transition: width 0.3s; }
-.death-bar-bullet { background: #ffd700; width: 0%; transition: width 0.3s; }
-.cause-label { font-size: 14px; color: #aaa; text-align: center; }
-.audio-controls {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    background: rgba(10,10,10,0.8); padding: 10px 15px; border: 1px solid #333; margin-top: 20px; width: 100%; box-sizing: border-box;
+
+.death-bar-asteroid {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    color: #04121a;
 }
-.audio-controls button {
-    background: #111; color: #fff; border: 1px solid #0f0; padding: 5px 10px; cursor: pointer; text-transform: uppercase; font-family: monospace; width: 100%;
+
+.death-bar-saucer {
+    background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+    color: #1a0404;
 }
-.audio-controls button:hover { background: #0f0; color: #000; }
-.audio-controls input[type=range] { width: 100%; accent-color: #0f0; }
+
+.death-bar-bullet {
+    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+    color: #1a1004;
+}
+
+.death-bar-hyper {
+    background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+    color: #14041a;
+}
+
+.thermometer-legend {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-family: monospace;
+    font-size: 9.5px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.leg-item { display: inline-flex; align-items: center; }
+.leg-ast { color: #38bdf8; }
+.leg-sau { color: #f87171; }
+.leg-bul { color: #fbbf24; }
+.leg-hyp { color: #c084fc; }
+
+/* System Driver Status Ticker */
+.diag-status-ticker {
+    width: 100%;
+    background: #030406;
+    border: 1.5px solid #1a222b;
+    border-radius: 4px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    color: #00ffcc;
+    text-shadow: 0 0 6px rgba(0, 255, 204, 0.5);
+    letter-spacing: 1px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.ticker-prompt {
+    color: #38bdf8;
+    font-weight: bold;
+}
+
+/* Audio & Fader Controls */
+.diag-audio-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.diag-fader-unit {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #030406;
+    border: 1.5px solid #1a222b;
+    border-radius: 4px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.arcade-fader {
+    flex: 1;
+    accent-color: #00ffcc;
+    cursor: pointer;
+    height: 6px;
+}
+
+/* Arcade Service Buttons */
+.arcade-service-btn {
+    background: linear-gradient(180deg, #182028 0%, #0d1217 100%);
+    border: 1.5px solid #2d3742;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #00ffcc;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 6px rgba(0, 0, 0, 0.6);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.arcade-service-btn:hover {
+    border-color: #00ffcc;
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+.arcade-service-btn:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.arcade-service-btn.btn-secondary-service {
+    width: 100%;
+    margin-top: 8px;
+    color: #aaccdd;
+    border-color: #2a3440;
+    font-size: 10.5px;
+}
+
+.arcade-service-btn.btn-secondary-service:hover {
+    color: #ffd700;
+    border-color: #ffd700;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 215, 0, 0.35);
+}
 
 .brain-controls {
-    display: flex; gap: 8px; margin-top: 10px; width: 100%; box-sizing: border-box;
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
-.brain-controls button {
-    flex: 1; background: #111; color: #00ffcc; border: 1px solid #00ffcc; padding: 8px 4px; cursor: pointer; text-transform: uppercase; font-family: monospace; font-size: 12px;
+
+.brain-controls .arcade-service-btn {
+    flex: 1;
 }
-.brain-controls button:hover { background: #00ffcc; color: #000; }
 
 .leaderboards-wrapper {
     display: flex;
