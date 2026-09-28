@@ -26,6 +26,16 @@ export function switchLeaderboardTab(tabName) {
 }
 window.switchLeaderboardTab = switchLeaderboardTab;
 
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+        }
+        if (window.closeLoadModal) window.closeLoadModal();
+    }
+});
+
 state.canvas = document.getElementById('gameCanvas');
 state.ctx = state.canvas.getContext('2d');
 

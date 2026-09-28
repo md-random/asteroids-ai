@@ -88,24 +88,61 @@ canvas#gameCanvas {
 #sidebar.open {
     transform: translateX(0);
 }
-#sidebarToggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 20;
-    background: #111;
-    color: #0f0;
-    border: 1px solid #0f0;
-    padding: 10px;
-    cursor: pointer;
-    font-family: monospace;
-    text-transform: uppercase;
-    box-shadow: 0 0 10px rgba(0,255,0,0.2);
-    transition: all 0.2s;
+/* Sidebar Header & Exit Button Unit */
+.sidebar-header-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
 }
-#sidebarToggle:hover {
-    background: #0f0;
-    color: #000;
+
+.sidebar-title {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: normal;
+    margin: 0;
+    font-size: 20px;
+    color: #fff;
+    line-height: 1.25;
+}
+
+.sidebar-exit-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.sidebar-exit-unit .arcade-label {
+    color: #ff3344;
+    border-color: #881122;
+    text-shadow: 0 0 6px rgba(255, 51, 68, 0.5);
+}
+
+/* Gameplay Screen Menu Button Unit */
+.sidebar-toggle-unit {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sidebar-toggle-unit .arcade-label {
+    color: #00ffcc;
+    border-color: #00775e;
+    text-shadow: 0 0 6px rgba(0, 255, 204, 0.5);
 }
 /* Hardware Diagnostic LED Panel */
 .diag-panel {
@@ -360,13 +397,30 @@ canvas#gameCanvas {
 /* Intro Screen - Authentic 1979 Atari Arcade Cabinet Styling */
 .intro-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: transparent;
+    background: #000;
     display: flex; align-items: center; justify-content: center;
     z-index: 999;
     overflow: hidden;
 }
 
-.intro-backdrop-left, .intro-backdrop-right, .intro-backdrop-gradient {
+/* Authentic Cabinet Side Art - Seamless Coverage on Intro Screen */
+.intro-backdrop-left {
+    display: block;
+    position: absolute; top: 0; left: 0; width: 50vw; height: 100vh;
+    background-image: url('../assets/media_1789938557926.png');
+    background-size: cover; background-position: left center; background-repeat: no-repeat;
+    opacity: 1; pointer-events: none; z-index: 1;
+}
+
+.intro-backdrop-right {
+    display: block;
+    position: absolute; top: 0; right: 0; width: 50vw; height: 100vh;
+    background-image: url('../assets/media_1789938527086.png');
+    background-size: cover; background-position: right center; background-repeat: no-repeat;
+    opacity: 1; pointer-events: none; z-index: 1;
+}
+
+.intro-backdrop-gradient {
     display: none;
 }
 
@@ -577,36 +631,99 @@ canvas#gameCanvas {
         0 0 18px rgba(255, 170, 0, 0.7);
 }
 
-/* Silkscreened Arcade Button Labels */
+/* Exit Button - Red Arcade Pushbutton */
+.btn-red .btn-cap {
+    background: radial-gradient(circle at 40% 35%, #ff8899 0%, #ee2233 45%, #aa1122 85%, #660812 100%);
+    box-shadow: 
+        0 3px 5px rgba(0, 0, 0, 0.6),
+        inset 0 2px 3px rgba(255, 255, 255, 0.6),
+        inset 0 -3px 4px rgba(40, 0, 10, 0.8),
+        0 0 14px rgba(255, 51, 68, 0.45);
+}
+.round-arcade-btn.btn-red:hover .btn-cap {
+    filter: brightness(1.25);
+    box-shadow: 
+        0 3px 6px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.85),
+        inset 0 -3px 4px rgba(40, 0, 10, 0.8),
+        0 0 24px rgba(255, 51, 68, 0.9);
+}
+.round-arcade-btn.btn-red:active .btn-cap {
+    transform: translateY(3px) scale(0.95);
+    filter: brightness(1.35);
+    box-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.7),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6),
+        0 0 16px rgba(255, 51, 68, 0.7);
+}
+
+/* Compact Arcade Button Size */
+.round-arcade-btn.btn-sm {
+    width: 48px;
+    height: 48px;
+}
+.round-arcade-btn.btn-sm .btn-cap {
+    width: 34px;
+    height: 34px;
+}
+.round-arcade-btn.btn-sm:active .btn-cap {
+    transform: translateY(3px) scale(0.95);
+}
+
+/* Authentic Arcade Label Plate (Matches First Page Plate Style) */
 .arcade-label {
     font-size: 11px;
     line-height: 1.4;
     letter-spacing: 2px;
     padding: 7px 14px;
-    background: #090c0f;
-    border: 1.5px solid #2d3742;
-    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(22, 26, 32, 0.96) 0%, rgba(10, 12, 16, 0.98) 100%);
+    border: 2px solid #3d4853;
+    outline: 1px solid rgba(0, 0, 0, 0.95);
+    border-radius: 6px;
     box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 2px 6px rgba(0, 0, 0, 0.7);
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 0 12px rgba(0, 0, 0, 0.9),
+        0 4px 12px rgba(0, 0, 0, 0.85);
     text-transform: uppercase;
     font-family: 'Press Start 2P', monospace;
     white-space: nowrap;
     cursor: default;
     user-select: none;
     pointer-events: none;
+    box-sizing: border-box;
+}
+
+/* Compact Label Plate for Menu & Exit */
+.arcade-label.arcade-label-sm {
+    font-size: 9px;
+    line-height: 1.2;
+    letter-spacing: 1.5px;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .arcade-button-unit:first-child .arcade-label {
     color: #00ffcc;
     border-color: #00775e;
-    text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
 }
 
 .arcade-button-unit:last-child .arcade-label {
     color: #ffb300;
     border-color: #805900;
-    text-shadow: 0 0 8px rgba(255, 179, 0, 0.5);
+    text-shadow: 0 0 8px rgba(255, 179, 0, 0.6);
+}
+
+.sidebar-toggle-unit .arcade-label {
+    color: #00ffcc;
+    border-color: #00775e;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+}
+
+.sidebar-exit-unit .arcade-label {
+    color: #ff3344;
+    border-color: #881122;
+    text-shadow: 0 0 8px rgba(255, 51, 68, 0.6);
 }
 
 

@@ -28,10 +28,23 @@
         </div>
     </div>
     
-    <button id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ MENU</button>
+    <div id="sidebarToggle" class="sidebar-toggle-unit" onclick="document.getElementById('sidebar').classList.toggle('open')" title="Operator Menu">
+        <button class="round-arcade-btn btn-green btn-sm" title="Operator Menu">
+            <span class="btn-cap"></span>
+        </button>
+        <div class="arcade-label arcade-label-sm">MENU</div>
+    </div>
 
     <div id="sidebar">
-        <h1 style="text-transform: uppercase; letter-spacing: 4px; font-weight: normal; margin-top: 0; font-size: 24px;">Asteroids AI Training</h1>
+        <div class="sidebar-header-row">
+            <h1 class="sidebar-title">Asteroids AI Training</h1>
+            <div class="sidebar-exit-unit">
+                <button class="round-arcade-btn btn-red btn-sm" onclick="document.getElementById('sidebar').classList.remove('open')" title="Exit Menu">
+                    <span class="btn-cap"></span>
+                </button>
+                <div class="arcade-label arcade-label-sm">EXIT</div>
+            </div>
+        </div>
         
         <!-- Hardware Diagnostic LED Panel -->
         <div class="diag-panel">
