@@ -25,7 +25,7 @@ export async function loadDefaultBrainIfEmpty() {
     let saved = localStorage.getItem('asteroids_ai_pop_grid_v2');
     if (!saved) {
         try {
-            let res = await fetch('data/default_brain.json');
+            let res = await fetch('data/default_brain.json?v=' + Date.now());
             if (res.ok) {
                 let data = await res.json();
                 let popList = data.population || (Array.isArray(data) ? data : null);
