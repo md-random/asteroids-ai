@@ -195,7 +195,7 @@ export async function exportBrain() {
             body: JSON.stringify(brainData)
         });
         if (res.ok) {
-            alert(`Auto-saved to data/default_brain.json (Gen ${state.generation})!`);
+            alert(`Auto-saved to data/default_brain.json AND data/brain_gen_${state.generation}.json!`);
             return;
         }
     } catch (e) {}
@@ -205,7 +205,7 @@ export async function exportBrain() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `default_brain.json`;
+    a.download = `brain_gen_${state.generation}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
